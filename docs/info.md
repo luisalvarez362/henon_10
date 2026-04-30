@@ -9,7 +9,7 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-This design implements a **fixed-point Henon map generator** with **serial output interfaces** for both state variables.
+This design implements a **fixed-point Henon map generator** with **serial output interfaces**.
 
 ### Core functionality
 
@@ -23,7 +23,6 @@ with constants:
 - b = 0.3  
 
 The implementation uses:
-- Fixed-point arithmetic (Q2.8 format)
 - 10-bit signed representation (WIDTH = 10, FRAC = 8)
 
 ---
