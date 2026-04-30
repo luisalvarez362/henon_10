@@ -26,9 +26,9 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: ""
-  ui[1]: ""
-  ui[2]: ""
+  ui[0]: "ena_henon"
+  ui[1]: "ena_ser_x"
+  ui[2]: "ena_ser_y"
   ui[3]: ""
   ui[4]: ""
   ui[5]: ""
@@ -36,11 +36,11 @@ pinout:
   ui[7]: ""
 
   # Outputs
-  uo[0]: ""
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
+  uo[0]: "Q_ser_x"
+  uo[1]: "eos_x"
+  uo[2]: "Q_ser_y"
+  uo[3]: "eos_y"
+  uo[4]: "done_henon"
   uo[5]: ""
   uo[6]: ""
   uo[7]: ""
