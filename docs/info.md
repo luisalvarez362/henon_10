@@ -20,7 +20,7 @@ The top module instantiates three sub-blocks:
 - **ser_x** — receives the 10-bit `x[9:0]` output and serialises it as a raw bit stream on `Q_ser_x`, with `eos_ser_x` flagging end-of-sequence.
 - **ser_y** — identical serialiser for the 10-bit `y[9:0]` output, independently enabled via `ena_ser_y`.
 
-![Alt text](hardware_arch.png)
+![Alt text](hardware_arch.jpeg)
 
 All internal arithmetic uses **Q2.8** (10-bit signed, scale = 256). The Hénon attractor is bounded to x ∈ [−1.5, 1.5] and y ∈ [−0.4, 0.4].
 
