@@ -8,68 +8,21 @@ You can also include images in this folder and reference them in the markdown. E
 -->
 
 ## How it works
+The Hénon map is a discrete-time dynamical system that exhibits chaotic behaviour.
+It is defined by two coupled equations — `x = 1 - a·x² + y` and `y = b·x` —
+which, under the classical parameters `a = 1.4` and `b = 0.3`, produce a bounded
+strange attractor. This implementation computes the map in 10-bit signed fixed-point
+(Q2.8) and serialises the resulting (x, y) samples as raw bit streams for off-chip readout.
 
-This design implements a **fixed-point Henon map generator** with **serial output interfaces**.
+The top module instantiates three sub-blocks:
 
-### Core functionality
+- **Henon_map** — computes the two recurrences `x = 1 - a·x² + y` and `y = b·x` using fixed-point arithmetic with constants `a = 1.4` and `b =.3`. Asserts `done_henon` once the first valid sample is available.
+- **ser_x** — receives the 10-bit `x[9:0]` output and serialises it as a raw bit stream on `Q_ser_x`, with `eos_ser_x` flagging end-of-sequence.
+- **ser_y** — identical serialiser for the 10-bit `y[9:0]` output, independently enabled via `ena_ser_y`.
 
-The circuit computes the discrete-time Henon map:
+![Alt text](hardware_arch.png)
 
-x(n+1) = 1 - a·x(n)^2 + y(n)  
-y(n+1) = b·x(n)
-
-with constants:
-- a = 1.4  
-- b = 0.3  
-
-The implementation uses:
-- 10-bit signed representation (WIDTH = 10, FRAC = 8)
-
----
-
-### Internal operation
-
-#### Henon map block
-
-- When `ena_henon = 1`, the system computes a new iteration every clock cycle.
-- Outputs:
-  - `x_out`: next x value
-  - `y_out`: next y value
-  - `done_henon`: indicates valid output (1 cycle pulse)
-
-- When `rst_n = 0`:
-  - Internal registers are reset to zero
-
----
-
-#### Serialization blocks
-
-Each variable (`x_out`, `y_out`) is serialized independently.
-
-- `ena_ser_x` and `ena_ser_y` act as start signals
-- On activation:
-  - The 10-bit value is loaded
-  - Data is shifted out LSB first
-  - One bit per clock cycle
-
-Outputs:
-- `Q_ser_x`, `Q_ser_y`: serial data streams
-- `eos_x`, `eos_y`: end-of-sequence signals (1 cycle pulse)
-
----
-
-### Data flow summary
-
-1. Enable Henon computation:
-   - `ena_henon = 1`
-2. Wait for valid output:
-   - `done_henon = 1`
-3. Trigger serialization:
-   - `ena_ser_x = 1` → serialize `x_out`
-   - `ena_ser_y = 1` → serialize `y_out`
-4. Read serial outputs:
-   - Bits appear on `Q_ser_x` / `Q_ser_y`
-   - `eos_*` indicates completion
+All internal arithmetic uses **Q2.8** (10-bit signed, scale = 256). The Hénon attractor is bounded to x ∈ [−1.5, 1.5] and y ∈ [−0.4, 0.4].
 
 
 ## How to test
@@ -148,27 +101,18 @@ Repeat the same process:
   - `eos_*` marks completion
  
 ### How to connect
-
-Using the Tiny Tapeout demo board:
-
-- Inputs (via GPIO or switches):
-  - `rst_n` → reset control
-  - `ena_henon` → enable Henon computation
-  - `ena_ser_x` → start serialization of x
-  - `ena_ser_y` → start serialization of y
-
-- Outputs:
-  - `Q_ser_x`, `Q_ser_y` → serial data outputs
-  - `eos_x`, `eos_y` → end-of-sequence indicators
-
-### Notes
-
-- Always apply reset before starting
-- Avoid triggering serialization and computation at the exact same cycle
-- Outputs are fixed-point signed values (Q2.8 format)
-
-
-
+| Signal | Dir | Description |
+|---|---|---|
+| `clk` | in | System clock |
+| `rst_n` | in | Active-low synchronous reset |
+| `ena_henon` | in | Enable Hénon map iteration |
+| `done_henon` | out | High when valid sample is ready |
+| `ena_ser_x` | in | Start serialisation of x |
+| `Q_ser_x` | out | Serial bit stream for x |
+| `eos_ser_x` | out | End-of-sequence flag for x |
+| `ena_ser_y` | in | Start serialisation of y |
+| `Q_ser_y` | out | Serial bit stream for y |
+| `eos_ser_y` | out | End-of-sequence flag for y |
 
 ## External hardware
 
