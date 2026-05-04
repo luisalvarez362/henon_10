@@ -1,6 +1,6 @@
 # Tiny Tapeout project information
 project:
-  title:        "henon"      # Project title
+  title:        "IEE_henon"      # Project title
   author:       "ktri"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "henon map"      # One line description of what your project does
